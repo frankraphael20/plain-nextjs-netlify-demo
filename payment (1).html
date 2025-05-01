@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Pi Payment</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  </head>
+  <body>
+    <h2>Lipa kwa Test-Pi</h2>
+    <button onclick="pay()">Lipa Sasa</button>
+
+    <script>
+      async function pay() {
+        Pi.init({ version: "2.0", sandbox: true });
+
+        Pi.authenticate([], function (auth) {
+          const paymentData = {
+            amount: 1,
+            memo: "Test payment to Frank app",
+            metadata: { test: true }
+          };
+
+          Pi.createPayment(paymentData, {
+            onReadyForServerApproval: (paymentId) => {
+              console.log("Ready for server approval:", paymentId);
+            },
+            onReadyForServerCompletion: (paymentId, txid) => {
+              console.log("Transaction completed:", paymentId, txid);
+            },
+            onCancel: (paymentId) => {
+              console.log("Payment cancelled:", paymentId);
+            },
+            onError: (error, payment) => {
+              console.error("Error:", error);
+            }
+          });
+        }, function (error) {
+          console.error("Authentication failed:", error);
+        });
+      }
+    </script>
+  </body>
+</html>
